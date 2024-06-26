@@ -49,6 +49,7 @@ class Alpaca(PromptStyle):
                 "Write a response that appropriately completes the request.\n\n"
                 f"### Instruction:\n{prompt}\n\n### Input:\n{kwargs['input']}\n\n### Response:\n"
             )
+        # HERE WE HAVE THE PROBLEM IN THE EVALUATION THINGY
         return (
             "Below is an instruction that describes a task. "
             "Write a response that appropriately completes the request.\n\n"

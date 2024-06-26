@@ -370,9 +370,11 @@ def validate(fabric: L.Fabric, model: GPT, val_dataloader: DataLoader, eval: Eva
 
 @torch.no_grad()
 def generate_example(fabric: L.Fabric, model: GPT, tokenizer: Tokenizer, eval: EvalArgs, data: DataModule):
-    instruction = "Recommend a movie for me to watch during the weekend and explain the reason."
-    fabric.print(instruction)
-    prompt = data.prompt_style.apply(instruction)
+    # both this thing are known and we should use them as we wish, but also try to get something from the data
+    # to make this quite random and interesting!
+    instruction = "Given the described geometric drawing instructions, determine the subsequent operations needed to complete or enhance the shapes according to their defined parameters and positions."
+    input = """- {"opname": "line", "start_x": 243, "start_y": 263, "end_x": 232, "end_y": 263}- {"opname": "line", "start_x": 232, "start_y": 273, "end_x": 243, "end_y": 273}- {"opname": "line", "start_x": 243, "start_y": 263, "end_x": 243, "end_y": 273}- {"opname": "line", "start_x": 232, "start_y": 263, "end_x": 232, "end_y": 273}"""
+    prompt = data.prompt_style.apply(instruction, input=input)
     encoded = tokenizer.encode(prompt, device=fabric.device)
     model.eval()
 
@@ -386,6 +388,8 @@ def generate_example(fabric: L.Fabric, model: GPT, tokenizer: Tokenizer, eval: E
     model.train()
     output = tokenizer.decode(output)
     fabric.print(output)
+    fabric.print("### GROUND TRUTH ###")
+    fabric.print("""- {"opname": "point", "x": 238, "y": 268}""")
 
 
 def get_lr_scheduler(optimizer, warmup_steps: int, max_steps: int):
